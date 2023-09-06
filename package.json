@@ -19,6 +19,9 @@
     "discord parser",
     "discord docs parser"
   ],
+  "repository": {
+    "url": "https://github.com/TFAGamingDev/discord.js-docs.git"
+  },
   "author": "TFAGaming",
   "license": "GPL-3.0",
   "dependencies": {
