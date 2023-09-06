@@ -1,0 +1,28 @@
+{
+  "name": "@tfadev/discord.js-docs",
+  "version": "0.1.0",
+  "description": "A simple & powerful parser and wrapper for discord.js docs.",
+  "main": "lib/index.js",
+  "typings": "typings/index.d.ts",
+  "scripts": {
+    "test": "tsc && node .",
+    "build": "tsc"
+  },
+  "keywords": [
+    "discord",
+    "api",
+    "discord api",
+    "discord.js",
+    "discord.js docs",
+    "discord docs",
+    "discord documentation",
+    "discord parser",
+    "discord docs parser"
+  ],
+  "author": "TFAGaming",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "axios": "^1.4.0",
+    "discord.js": "^14.11.0"
+  }
+}
