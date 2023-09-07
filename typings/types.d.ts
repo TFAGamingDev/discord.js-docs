@@ -48,7 +48,7 @@ export interface DocsParserSearchOptions {
     include?: ('classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals')[];
 }
 export interface DocsParserFormatOptions {
-    emojis?: {
+    symbols?: {
         classes?: string;
         functions?: string;
         interfaces?: string;
@@ -58,7 +58,7 @@ export interface DocsParserFormatOptions {
     sortByPoints?: boolean;
 }
 export interface DocsParserFormattedOutput {
-    emoji: string;
+    symbol: string;
     name: string;
     description?: string;
     url?: string;
