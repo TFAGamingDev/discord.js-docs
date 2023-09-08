@@ -1,5 +1,7 @@
 import axios from 'axios';
-import { DocsParserFormatOptions, DocsParserFormattedOutput } from '../types';
+import {
+    DiscordJSDocsFormatOptions
+} from '../types';
 
 export const fetch = async (url: string, method?: string) => {
     const fetched = await axios(url, {
@@ -43,7 +45,7 @@ export const compareTwoStrings = (first: string, second: string) => {
     return (2.0 * intersectionSize) / (first.length + second.length - 2);
 };
 
-export const symbolForDiscord = (char: string, custom?: DocsParserFormatOptions) => {
+export const symbolForDiscord = (char: string, custom?: DiscordJSDocsFormatOptions) => {
     switch (char) {
         case 'classes': {
             return custom?.symbols?.classes || `:regional_indicator_c:`;

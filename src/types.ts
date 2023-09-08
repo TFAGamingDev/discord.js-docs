@@ -1,4 +1,4 @@
-export interface DiscordJSDocsSources {
+export interface SourceTypes {
     stable: string,
     main: string,
     rpc: string,
@@ -14,7 +14,7 @@ export interface DiscordJSDocsSources {
     formatters: string // ← Second Output
 };
 
-export enum DiscordJSDocsSourceURLs {
+export enum SourceURL {
     stable = "https://raw.githubusercontent.com/discordjs/docs/main/discord.js/stable.json",
     main = "https://raw.githubusercontent.com/discordjs/docs/main/discord.js/main.json",
     rpc = "https://raw.githubusercontent.com/discordjs/rpc/docs/master.json",
@@ -30,7 +30,7 @@ export enum DiscordJSDocsSourceURLs {
     formatters = "https://raw.githubusercontent.com/discordjs/docs/main/formatters/main.api.json"
 };
 
-export enum SourceURL {
+export enum SourceName {
     Stable = 'stable',
     Main = 'main',
     RPC = 'rpc',
@@ -46,12 +46,21 @@ export enum SourceURL {
     Formatters = 'formatters'
 };
 
-export interface DocsParserSearchOptions {
+export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
+
+export interface DiscordJSDocsSearchOptions {
     rate?: number,
-    include?: ('classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals')[]
+    include?: Types[],
+    sort?: boolean
 };
 
-export interface DocsParserFormatOptions {
+export interface DiscordJSDocsSearchOutput {
+    structure: DataTypesStructure,
+    key: string,
+    point: number
+};
+
+export interface DiscordJSDocsFormatOptions {
     symbols?: {
         classes?: string,
         functions?: string,
@@ -59,10 +68,10 @@ export interface DocsParserFormatOptions {
         typedefs?: string,
         externals?: string
     },
-    sortByPoints?: boolean
+    sort?: boolean
 };
 
-export interface DocsParserFormattedOutput {
+export interface DiscordJSDocsFormatOutput {
     symbol: string,
     name: string,
     description?: string,
@@ -70,7 +79,6 @@ export interface DocsParserFormattedOutput {
 };
 
 // discord.js docs
-
 export interface ClassStructure {
     name: string,
     description?: string,
@@ -149,14 +157,14 @@ export interface TypedefsStructure {
     meta: { line: number, file: string, path?: string, url?: string }
 };
 
-export type DiscordJSDocsDataTypesStructure =
+export type DataTypesStructure =
     ClassStructure |
     FunctionStructure |
     InterfaceStructure |
     TypedefsStructure;
 
-export interface DiscordJSDocsObjectOutput {
-    meta?: { generator: string, format: number, date: number },
+export interface DiscordJSDocsJSONOutput {
+    meta?: {generator: string, format: number, date: number },
     classes?: ClassStructure[],
     functions?: FunctionStructure[],
     interfaces?: InterfaceStructure[],
@@ -165,7 +173,7 @@ export interface DiscordJSDocsObjectOutput {
     custom?: { general?: { name?: string, files?: { welcome?: { name?: string, type?: string, content?: string } } } }
 };
 
-export interface DiscordJSDocsObjectOtherOutput {
+export interface DiscordJSDocsAPIJSONOutput {
     metadata: {
         toolPackage: string,
         toolVersion: string,

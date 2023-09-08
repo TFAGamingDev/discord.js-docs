@@ -1,2 +1,2 @@
-export * from './core/DocsParser';
+export * from './core/DiscordJSDocs';
 export * from './types';
