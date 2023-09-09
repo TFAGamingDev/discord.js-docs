@@ -9,17 +9,17 @@ import {
     DiscordJSDocsSearchOptions,
     DiscordJSDocsSearchOutput
 } from "../types";
-import { compareTwoStrings, fetch as axiosFetch, symbolForDiscord } from "./utils";
+import { compareTwoStrings, fetch as axiosFetch, symbolFormatter, removeJSDocComments } from "./utils";
 
 export class DiscordJSDocs {
-    public readonly discordjsUrl?: 'discord.js.org' | 'old.discordjs.dev' = 'discord.js.org';
+    public readonly baseURL?: 'discord.js.org' | 'old.discordjs.dev' = 'discord.js.org';
 
     /**
     * Create a new parser for discord.js docs API.
-    * @param {'discord.js.org' | 'old.discordjs.dev'} discordjsUrlFormat The discord.js URL format. This parameter is important when discord.js is trying to change it's documentation website structure.
+    * @param {'discord.js.org' | 'old.discordjs.dev'} baseURL The discord.js URL format. This parameter is important when discord.js is trying to change it's documentation website structure.
     */
-    constructor(discordjsUrlFormat?: 'discord.js.org' | 'old.discordjs.dev') {
-        this.discordjsUrl = discordjsUrlFormat;
+    constructor(baseURL?: 'discord.js.org' | 'old.discordjs.dev') {
+        this.baseURL = baseURL;
     };
 
     /**
@@ -45,7 +45,7 @@ export class DiscordJSDocs {
      * @param {keyof SourceTypes} source The source name from discord.js docs. 
      * @param {string} query The query for the search.
      * @param {DiscordJSDocsSearchOptions} options Options for the search.
-     * @returns 
+     * @returns {Promise<DiscordJSDocsSearchOutput[]>}
      */
     public async search(source: keyof SourceTypes, query: string, options?: DiscordJSDocsSearchOptions): Promise<DiscordJSDocsSearchOutput[]> {
         if (!source) throw new Error('\'source\' is a required parameter.');
@@ -70,7 +70,7 @@ export class DiscordJSDocs {
                 const data = fetched[key][i];
                 if (!data.name) continue;
 
-                const comparition = compareTwoStrings(query, data.name);
+                const comparition = compareTwoStrings(options?.strict ? query : query.toLowerCase(), options?.strict ? data.name : `${data.name}`.toLowerCase());
 
                 if (comparition >= (options?.rate || 0.8)) {
                     similars.push({
@@ -87,6 +87,28 @@ export class DiscordJSDocs {
 
             return sorted;
         } else return similars;
+    };
+
+    /**
+     * Get a discord.js docs keyword's data by query, has similar options to the method **search**.
+     * 
+     * You can use the example below instead of this method:
+     * ```ts
+     * const res = await [parser].search(...);
+     * 
+     * res[0];
+     * ```
+     * @param {keyof SourceTypes} source The source name from discord.js docs. 
+     * @param {string} keyword The query for the search.
+     * @param {DiscordJSDocsSearchOptions} options Options for the search.
+     * @returns {Promise<DiscordJSDocsSearchOutput | null>}
+     */
+    public async get(source: keyof SourceTypes, keyword: string): Promise<DiscordJSDocsSearchOutput['structure'] | null> {
+        const res = await this.search(source, keyword, { sort: true });
+
+        if (res.length <= 0) return null;
+
+        return res[0].structure;
     };
 
     /**
@@ -130,17 +152,32 @@ export class DiscordJSDocs {
 
             const fileName = data[i].structure?.meta?.file?.split('.')[0];
 
+            let description = '';
+            if (options?.clearJSDocComments) description = removeJSDocComments(data[i].structure.description || '').map((v) => `- ${v.content}`).join('\n');
+
             output.push({
-                symbol: symbolForDiscord(data[i].key, options),
+                symbol: symbolFormatter(data[i].key, options),
                 name: data[i].structure.name || '',
-                description: data[i].structure.description || undefined,
+                description: options?.clearJSDocComments ? (description.length <= 0 ? undefined : description) : (data[i].structure.description || undefined),
                 url: data[i].structure.meta?.url ||
                     fileName === data[i].structure.name    
-                        ? `https://${this.discordjsUrl}/#/docs/${splittedURL?.at(1) || 'general'}/main/${datatype}/${fileName}`
-                        : `https://${this.discordjsUrl}/#/docs/discord.js/main/search?query=` + data[i].structure.name 
+                        ? `https://${this.baseURL}/#/docs/${splittedURL?.at(1) || 'general'}/main/${datatype}/${fileName}`
+                        : `https://${this.baseURL}/#/docs/discord.js/main/search?query=` + data[i].structure.name 
             });
         };
 
         return output;
+    };
+
+    public get repositoryURL() {
+        return `https://www.github.com/discordjs/discord.js`;
+    };
+
+    public get organizationURL() {
+        return `https://www.github.com/discordjs`;
+    };
+
+    public get favicon() {
+        return 'https://avatars.githubusercontent.com/u/26492485?s=200&v=4';
     };
 };

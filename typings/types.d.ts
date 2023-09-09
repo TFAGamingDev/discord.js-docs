@@ -43,11 +43,12 @@ export declare enum SourceName {
     Util = "util",
     Formatters = "formatters"
 }
-export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
+export type KeywordTypes = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
 export interface DiscordJSDocsSearchOptions {
     rate?: number;
-    include?: Types[];
+    include?: KeywordTypes[];
     sort?: boolean;
+    strict?: boolean;
 }
 export interface DiscordJSDocsSearchOutput {
     structure: DataTypesStructure;
@@ -63,6 +64,7 @@ export interface DiscordJSDocsFormatOptions {
         externals?: string;
     };
     sort?: boolean;
+    clearJSDocComments?: boolean;
 }
 export interface DiscordJSDocsFormatOutput {
     symbol: string;

@@ -46,12 +46,13 @@ export enum SourceName {
     Formatters = 'formatters'
 };
 
-export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
+export type KeywordTypes = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
 
 export interface DiscordJSDocsSearchOptions {
     rate?: number,
-    include?: Types[],
-    sort?: boolean
+    include?: KeywordTypes[],
+    sort?: boolean,
+    strict?: boolean,
 };
 
 export interface DiscordJSDocsSearchOutput {
@@ -68,7 +69,8 @@ export interface DiscordJSDocsFormatOptions {
         typedefs?: string,
         externals?: string
     },
-    sort?: boolean
+    sort?: boolean,
+    clearJSDocComments?: boolean
 };
 
 export interface DiscordJSDocsFormatOutput {

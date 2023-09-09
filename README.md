@@ -33,12 +33,13 @@ await parser.fetch('main');
 
 ### Search from a source by query:
 
-The method to do this job is **search()**. In the options of this method, you can set the rate of the similarity between the query and the keyword (By following this condition: 0 < rate ≤ 1), and you can include only specific types like classes, typedefs... etc.
+The method to do this job is **search()**.
 
 The options of this method:
-  - `rate` (**number**): The rate of similarity of the keyword and the query, must be in this following condition: 0 < rate ≤ 1
-  - `include` (**Type[]**): Include single or multiple specific types, like classex, typedefs... etc
-  - `sort` (**boolean**): Sort the response by points of each keyword or not?
+  - `rate` (**number** - `0.8`): The rate of similarity of the keyword and the query, must be in this following condition: 0 < rate ≤ 1
+  - `include` (**KeywordTypes[]** - `undefined`): Include single or multiple specific types, like classex, typedefs... etc
+  - `sort` (**boolean** - `false`): Sort the response by points of each keyword or not?
+  - `strict` (**boolean** - `false`): Enable strict mode; The keyword and the query must be exactly similar (not similar to `rate: 1`).
 
 ```ts
 await parser.search('main', 'Client');
@@ -50,17 +51,27 @@ await parser.search('builders', 'SlashCommand', {
         'typedefs',
         ...
     ],
-    sort: false
+    sort: false,
+    strict: true
 });
+```
+
+### Get a keyword's data:
+
+To get a keyword's data (such as class properties, functions... etc), use **get()** method. If the keyword is not found, it will return `null`.
+
+```ts
+await parser.get('main', 'Client');
 ```
 
 ### Format searched data:
 
-Format the keywords from the method **search()**, returns an objects array with some symbols.
+Format the keywords using the method **search()**, it will return an objects array with some symbols.
 
 The options of this method:
-  - `symbols` (**{}**): Set the symbols of each keyword's type.
-  - `sort` (**boolean**): Sort the response by points of each keyword or not?
+  - `symbols` (**object** - `{}`): Set the symbols of each keyword's type.
+  - `sort` (**boolean** - `false`): Sort the response by points of each keyword or not?
+  - `clearJSDocComments`: (**boolean** - `false`): Make the JSDoc comments pretty; Removing brackets (`{` and `}`) and any prefixes starts with `@` (Example: `@link`).
 
 ```ts
 parser.format(...);
@@ -71,7 +82,8 @@ parser.format(..., {
         interfaces: 'I',
         ...
       },
-    sort: true
+    sort: true,
+    clearJSDocComments: false
 });
 ```
 
@@ -94,7 +106,8 @@ const main = async (): Promise<void> => {
             interfaces: 'I',
             externals: 'E'
         },
-        sort: true
+        sort: true,
+        clearJSDocComments: true
     }); 
 
     const mapped = formatted.map((key) => `[${key.symbol}] ${key.name}: ${key.description || 'No description'}`);
@@ -119,12 +132,12 @@ Expected output:
   '[E] ChannelType: No description',
   '[C] ForumChannel: Represents a channel that only contains threads',
   '[C] GuildChannel: Represents a guild channel from any of the following:\n' +
-    '- {@link TextChannel}\n' +
-    '- {@link VoiceChannel}\n' +
-    '- {@link CategoryChannel}\n' +
-    '- {@link NewsChannel}\n' +
-    '- {@link StageChannel}\n' +
-    '- {@link ForumChannel}',
+    '- TextChannel\n' +
+    '- VoiceChannel\n' +
+    '- CategoryChannel\n' +
+    '- NewsChannel\n' +
+    '- StageChannel\n' +
+    '- ForumChannel',
   '[C] StageChannel: Represents a guild stage channel on Discord.',
   '[C] VoiceChannel: Represents a guild voice channel on Discord.',
   '[E] ChannelFlags: No description'

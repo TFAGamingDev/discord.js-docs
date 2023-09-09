@@ -45,7 +45,7 @@ export const compareTwoStrings = (first: string, second: string) => {
     return (2.0 * intersectionSize) / (first.length + second.length - 2);
 };
 
-export const symbolForDiscord = (char: string, custom?: DiscordJSDocsFormatOptions) => {
+export const symbolFormatter = (char: string, custom?: DiscordJSDocsFormatOptions) => {
     switch (char) {
         case 'classes': {
             return custom?.symbols?.classes || `:regional_indicator_c:`;
@@ -71,4 +71,20 @@ export const symbolForDiscord = (char: string, custom?: DiscordJSDocsFormatOptio
             return '';
         };
     };
+};
+
+export const removeJSDocComments = (string: string): { tag: string, content: string }[] => {
+    const regex = /{@([a-zA-Z]+)(?: (.*?))?(?:}|\n)/g;
+
+    const tagArray: { tag: string, content: string }[] = [];
+    let match;
+
+    while ((match = regex.exec(string)) !== null) {
+        const tag = match[1];
+        const content = match[2];
+        
+        tagArray.push({ tag, content });
+    };
+
+    return tagArray;
 };
