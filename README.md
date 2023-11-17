@@ -6,7 +6,7 @@
     <img src="https://img.shields.io/npm/dt/@tfadev/discord.js-docs.svg?maxAge=3600&label=Downloads">
 </p>
 
-A simple & powerful parser and wrapper for [discord.js](https://github.com/discordjs/discord.js) documentation website. This library uses [axios](https://npmjs.com/package/axios) for the HTTP requests.
+A simple & powerful parser and wrapper for [discord.js](https://github.com/discordjs/discord.js) documentation website. This package uses [axios](https://npmjs.com/package/axios) as the main HTTP requests handler.
 
 ## Installation
 ```sh-session
@@ -15,10 +15,10 @@ npm install @tfadev/discord.js-docs axios
 
 ## Usage
 
-Create a new parser using the class `DiscordJSDocs`. The parameter is based discord.js docs URL, by default it's "**discord.js.org**".
+Create a new parser using the class `Docs`. The parameter is based discord.js docs URL, by default it's "**discord.js.org**".
 
 ```ts
-import { DiscordJSDocs } from '@tfadev/discord.js-docs';
+import { Docs as DiscordJSDocs } from '@tfadev/discord.js-docs';
 
 const parser = new DiscordJSDocs();
 ```
@@ -71,78 +71,76 @@ Format the keywords using the method **search()**, it will return an objects arr
 The options of this method:
   - `symbols` (**object** - `{}`): Set the symbols of each keyword's type.
   - `sort` (**boolean** - `false`): Sort the response by points of each keyword or not?
-  - `clearJSDocComments`: (**boolean** - `false`): Make the JSDoc comments pretty; Removing brackets (`{` and `}`) and any prefixes starts with `@` (Example: `@link`).
+  - `pretty`: (**boolean** - `false`): Make the JSDoc comments pretty; removes brackets (`{` and `}`) and any prefixes starts with `@` (**@link**, **@see**... etc).
 
 ```ts
-parser.format(...);
+import { DocsUtils } from '@tfadev/discord.js-docs';
 
-parser.format(..., {
+DocsUtils.format([...]);
+
+DocsUtils.format([ ..], {
     symbols: {
         classes: 'C',
-        interfaces: 'I',
+        functions: 'F',
         ...
-      },
+    },
     sort: true,
-    clearJSDocComments: false
+    pretty: true
 });
 ```
 
 ## Example
 
-Here is a simple example, you can test it out.
+Here is a simple example using the `search` and `format` method.
 
 ```ts
-import { DiscordJSDocs } from '@tfadev/discord.js-docs';
+import { Docs as DiscordJSDocs, DocsUtils } from '@tfadev/discord.js-docs';
 
 const parser = new DiscordJSDocs();
 
-const main = async (): Promise<void> => {
-    const response = await parser.search('main', 'Channel', { rate: 0.7 });
+(async () => {
+    const searched = await parser.search('main', 'Channel', { rate: 0.7 });
 
-    const formatted = parser.format(response, {
+    const formatted = DocsUtils.format(searched, {
         symbols: {
             classes: 'C',
             typedefs: 'T',
             interfaces: 'I',
-            externals: 'E'
+            externals: 'E',
+            functions: 'F'
         },
         sort: true,
-        clearJSDocComments: true
+        pretty: true
     }); 
 
-    const mapped = formatted.map((key) => `[${key.symbol}] ${key.name}: ${key.description || 'No description'}`);
+    const result = formatted.map((v) => `[${v.symbol}] ${v.name}`);
 
-    console.log(mapped);
-
-    return;
-};
-
-main();
+    console.log(result);
+})();
 ```
 
-Expected output:
+Expected output in terminal:
 
 ```ts
 [
-  '[C] DMChannel: Represents a direct message channel between two users.',
-  '[E] APIChannel: No description',
-  '[C] BaseChannel: Represents any channel on Discord.',
-  '[C] NewsChannel: Represents a guild news channel on Discord.',
-  '[C] TextChannel: Represents a guild text channel on Discord.',
-  '[E] ChannelType: No description',
-  '[C] ForumChannel: Represents a channel that only contains threads',
-  '[C] GuildChannel: Represents a guild channel from any of the following:\n' +
-    '- TextChannel\n' +
-    '- VoiceChannel\n' +
-    '- CategoryChannel\n' +
-    '- NewsChannel\n' +
-    '- StageChannel\n' +
-    '- ForumChannel',
-  '[C] StageChannel: Represents a guild stage channel on Discord.',
-  '[C] VoiceChannel: Represents a guild voice channel on Discord.',
-  '[E] ChannelFlags: No description'
+  '[C] DMChannel',
+  '[E] APIChannel',
+  '[C] BaseChannel',
+  '[C] NewsChannel',
+  '[C] TextChannel',
+  '[F] channelLink',
+  '[E] ChannelType',
+  '[C] ForumChannel',
+  '[C] GuildChannel',
+  '[C] MediaChannel',
+  '[C] StageChannel',
+  '[C] VoiceChannel',
+  '[E] ChannelFlags'
 ]
 ```
 
+## Known bugs
+- The `url` property (defined in the type `DiscordJSDocsFormatOutput`) has a chance to return an invalid URL, from the both base URLs.
+
 ## License
-**GNU General Public License** ([View here](./LICENSE))
+**GNU General Public License v3** ([View here](./LICENSE))

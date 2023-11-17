@@ -1,18 +1,5 @@
-export interface SourceTypes {
-    stable: string;
-    main: string;
-    rpc: string;
-    collection: string;
-    builders: string;
-    voice: string;
-    rest: string;
-    next: string;
-    core: string;
-    proxy: string;
-    ws: string;
-    util: string;
-    formatters: string;
-}
+export type BaseURLs = 'discord.js.org' | 'old.discordjs.dev';
+export type Sources = 'stable' | 'main' | 'rpc' | 'collection' | 'builders' | 'voice' | 'rest' | 'next' | 'core' | 'proxy' | 'ws' | 'util' | 'formatters';
 export declare enum SourceURL {
     stable = "https://raw.githubusercontent.com/discordjs/docs/main/discord.js/stable.json",
     main = "https://raw.githubusercontent.com/discordjs/docs/main/discord.js/main.json",
@@ -28,7 +15,7 @@ export declare enum SourceURL {
     util = "https://raw.githubusercontent.com/discordjs/docs/main/util/main.api.json",
     formatters = "https://raw.githubusercontent.com/discordjs/docs/main/formatters/main.api.json"
 }
-export declare enum SourceName {
+export declare enum Source {
     Stable = "stable",
     Main = "main",
     RPC = "rpc",
@@ -43,19 +30,33 @@ export declare enum SourceName {
     Util = "util",
     Formatters = "formatters"
 }
-export type KeywordTypes = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
-export interface DiscordJSDocsSearchOptions {
+export type SourceType = {
+    stable: DiscordJSDocsDefaultJSONOutput;
+    main: DiscordJSDocsDefaultJSONOutput;
+    rpc: DiscordJSDocsDefaultJSONOutput;
+    collection: DiscordJSDocsDefaultJSONOutput;
+    builders: DiscordJSDocsDefaultJSONOutput;
+    voice: DiscordJSDocsDefaultJSONOutput;
+    rest: DiscordJSDocsDefaultJSONOutput;
+    next: DiscordJSDocsAPIJSONOutput;
+    core: DiscordJSDocsAPIJSONOutput;
+    proxy: DiscordJSDocsDefaultJSONOutput;
+    ws: DiscordJSDocsDefaultJSONOutput;
+    util: DiscordJSDocsAPIJSONOutput;
+    formatters: DiscordJSDocsAPIJSONOutput;
+};
+export interface SearchOptions {
     rate?: number;
-    include?: KeywordTypes[];
+    include?: Types[];
     sort?: boolean;
     strict?: boolean;
 }
-export interface DiscordJSDocsSearchOutput {
-    structure: DataTypesStructure;
-    key: string;
-    point: number;
+export interface SearchOutput {
+    structure: TypesStructure;
+    type: string;
+    points: number;
 }
-export interface DiscordJSDocsFormatOptions {
+export interface FormatOptions {
     symbols?: {
         classes?: string;
         functions?: string;
@@ -64,15 +65,79 @@ export interface DiscordJSDocsFormatOptions {
         externals?: string;
     };
     sort?: boolean;
-    clearJSDocComments?: boolean;
+    pretty?: boolean;
 }
-export interface DiscordJSDocsFormatOutput {
+export interface FormatOutput {
     symbol: string;
     name: string;
     description?: string;
     url?: string;
 }
-export interface ClassStructure {
+export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
+export type TypesStructure = Class | Function | Interface | Typedefs;
+export interface DiscordJSDocsDefaultJSONOutput {
+    meta?: {
+        generator: string;
+        format: number;
+        date: number;
+    };
+    classes?: Class[];
+    functions?: Function[];
+    interfaces?: Interface[];
+    typedefs?: Typedefs[];
+    externals?: [{
+        name?: string;
+        see?: [];
+        meta?: {
+            line: number;
+            file: string;
+            path?: string;
+        };
+    }];
+    custom?: {
+        general?: {
+            name?: string;
+            files?: {
+                welcome?: {
+                    name?: string;
+                    type?: string;
+                    content?: string;
+                };
+            };
+        };
+    };
+}
+export interface DiscordJSDocsAPIJSONOutput {
+    metadata: {
+        toolPackage: string;
+        toolVersion: string;
+        schemaVersion: number;
+        oldestForwardsCompatibleVersion: number;
+        tsDocConfig?: {
+            $schema: string;
+            noStandardTags: boolean;
+            tagDefinition: [];
+            supportForTags?: object;
+            reportUnsupportedHtmlElements?: boolean;
+        };
+    };
+    projectFolderUrl: string;
+    kind: string;
+    canonicalReference: string;
+    docComment: string;
+    name: string;
+    preserveMemberOrder: boolean;
+    members?: [
+        {
+            kind: string;
+            canonicalReference: string;
+            name: string;
+            preserveMemberOrder: boolean;
+            members: [];
+        }
+    ];
+}
+export interface Class {
     name: string;
     description?: string;
     implements?: [];
@@ -101,13 +166,11 @@ export interface ClassStructure {
             name: string;
             description?: string;
             scope: string;
-            params: [
-                {
-                    name: string;
-                    description?: string;
-                    type: [];
-                }
-            ];
+            params: {
+                name: string;
+                description?: string;
+                type: [];
+            }[];
             returns: any[];
             meta: {
                 line: number;
@@ -139,19 +202,17 @@ export interface ClassStructure {
         url?: string;
     };
 }
-export interface FunctionStructure {
+export interface Function {
     name: string;
     description?: string;
     scope: string;
     access?: string;
     async?: boolean;
-    params?: [
-        {
-            name: string;
-            description?: string;
-            type: any[];
-        }
-    ];
+    params?: {
+        name: string;
+        description?: string;
+        type: any[];
+    }[];
     returns?: [];
     meta: {
         line: number;
@@ -160,7 +221,7 @@ export interface FunctionStructure {
         url?: string;
     };
 }
-export interface InterfaceStructure {
+export interface Interface {
     name: string;
     description?: string;
     props?: [
@@ -185,7 +246,7 @@ export interface InterfaceStructure {
         url?: string;
     };
 }
-export interface TypedefsStructure {
+export interface Typedefs {
     name: string;
     description?: string;
     type: any[];
@@ -202,67 +263,4 @@ export interface TypedefsStructure {
         path?: string;
         url?: string;
     };
-}
-export type DataTypesStructure = ClassStructure | FunctionStructure | InterfaceStructure | TypedefsStructure;
-export interface DiscordJSDocsJSONOutput {
-    meta?: {
-        generator: string;
-        format: number;
-        date: number;
-    };
-    classes?: ClassStructure[];
-    functions?: FunctionStructure[];
-    interfaces?: InterfaceStructure[];
-    typedefs?: TypedefsStructure[];
-    externals?: [{
-        name?: string;
-        see?: [];
-        meta?: {
-            line: number;
-            file: string;
-            path: string;
-        };
-    }];
-    custom?: {
-        general?: {
-            name?: string;
-            files?: {
-                welcome?: {
-                    name?: string;
-                    type?: string;
-                    content?: string;
-                };
-            };
-        };
-    };
-}
-export interface DiscordJSDocsAPIJSONOutput {
-    metadata: {
-        toolPackage: string;
-        toolVersion: string;
-        schemaVersion: number;
-        oldestForwardsCompatibleVersion: number;
-        tsDocConfig?: {
-            '$schema': string;
-            noStandardTags: boolean;
-            tagDefinition: [];
-            supportForTags?: object;
-            reportUnsupportedHtmlElements?: boolean;
-        };
-    };
-    projectFolderUrl: string;
-    kind: string;
-    canonicalReference: string;
-    docComment: string;
-    name: string;
-    preserveMemberOrder: boolean;
-    members?: [
-        {
-            kind: string;
-            canonicalReference: string;
-            name: string;
-            preserveMemberOrder: boolean;
-            members: [];
-        }
-    ];
 }

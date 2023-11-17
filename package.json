@@ -1,6 +1,6 @@
 {
   "name": "@tfadev/discord.js-docs",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "A simple & powerful parser and wrapper for discord.js docs.",
   "main": "lib/index.js",
   "typings": "typings/index.d.ts",
@@ -25,7 +25,6 @@
   "author": "TFAGaming",
   "license": "GPL-3.0",
   "dependencies": {
-    "axios": "^1.4.0",
-    "discord.js": "^14.13.0"
+    "axios": "^1.4.0"
   }
 }

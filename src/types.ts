@@ -1,18 +1,6 @@
-export interface SourceTypes {
-    stable: string,
-    main: string,
-    rpc: string,
-    collection: string,
-    builders: string,
-    voice: string,
-    rest: string,
-    next: string, // ← Second Output
-    core: string, // ← Second Output
-    proxy: string,
-    ws: string,
-    util: string, // ← Second Output
-    formatters: string // ← Second Output
-};
+export type BaseURLs = 'discord.js.org' | 'old.discordjs.dev';
+
+export type Sources = 'stable' | 'main' | 'rpc' | 'collection' | 'builders' | 'voice' | 'rest' | 'next' | 'core' | 'proxy' | 'ws' | 'util' | 'formatters';
 
 export enum SourceURL {
     stable = "https://raw.githubusercontent.com/discordjs/docs/main/discord.js/stable.json",
@@ -30,7 +18,7 @@ export enum SourceURL {
     formatters = "https://raw.githubusercontent.com/discordjs/docs/main/formatters/main.api.json"
 };
 
-export enum SourceName {
+export enum Source {
     Stable = 'stable',
     Main = 'main',
     RPC = 'rpc',
@@ -46,22 +34,37 @@ export enum SourceName {
     Formatters = 'formatters'
 };
 
-export type KeywordTypes = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
+export type SourceType = {
+    stable: DiscordJSDocsDefaultJSONOutput,
+    main: DiscordJSDocsDefaultJSONOutput,
+    rpc: DiscordJSDocsDefaultJSONOutput,
+    collection: DiscordJSDocsDefaultJSONOutput,
+    builders: DiscordJSDocsDefaultJSONOutput,
+    voice: DiscordJSDocsDefaultJSONOutput,
+    rest: DiscordJSDocsDefaultJSONOutput,
+    next: DiscordJSDocsAPIJSONOutput, // API Output
+    core: DiscordJSDocsAPIJSONOutput, // API Output
+    proxy: DiscordJSDocsDefaultJSONOutput,
+    ws: DiscordJSDocsDefaultJSONOutput,
+    util: DiscordJSDocsAPIJSONOutput, // API Output
+    formatters: DiscordJSDocsAPIJSONOutput // API Output
+};
 
-export interface DiscordJSDocsSearchOptions {
+// Methods
+export interface SearchOptions {
     rate?: number,
-    include?: KeywordTypes[],
+    include?: Types[],
     sort?: boolean,
     strict?: boolean,
 };
 
-export interface DiscordJSDocsSearchOutput {
-    structure: DataTypesStructure,
-    key: string,
-    point: number
+export interface SearchOutput {
+    structure: TypesStructure,
+    type: string,
+    points: number
 };
 
-export interface DiscordJSDocsFormatOptions {
+export interface FormatOptions {
     symbols?: {
         classes?: string,
         functions?: string,
@@ -70,108 +73,28 @@ export interface DiscordJSDocsFormatOptions {
         externals?: string
     },
     sort?: boolean,
-    clearJSDocComments?: boolean
+    pretty?: boolean
 };
 
-export interface DiscordJSDocsFormatOutput {
+export interface FormatOutput {
     symbol: string,
     name: string,
     description?: string,
     url?: string
 };
 
-// discord.js docs
-export interface ClassStructure {
-    name: string,
-    description?: string,
-    implements?: [],
-    construct?: { name?: string, params?: [] },
-    props?: [{
-        name: string,
-        description?: string,
-        scope: string,
-        nullable?: boolean,
-        readonly?: boolean,
-        type: any[],
-        meta: { line: number, file: string, path?: string, url?: string }
-    }],
-    methods?: [{
-        name: string,
-        description?: string,
-        scope: string,
-        params: [{
-            name: string,
-            description?: string,
-            type: []
-        }],
-        returns: any[],
-        meta: { line: number, file: string, path?: string, url?: string}
-    }],
-    extends?: any[],
-    abstract?: boolean,
-    events?: [{
-        name: string,
-        description?: string,
-        params?: any[],
-        meta: { line: number, file: string, path?: string, url?: string }
-    }]
-    meta: { line: number, file: string, path?: string, url?: string }
-};
+// API Output
+export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
 
-export interface FunctionStructure {
-    name: string,
-    description?: string,
-    scope: string,
-    access?: string,
-    async?: boolean,
-    params?: [{
-        name: string,
-        description?: string,
-        type: any[]
-    }],
-    returns?: [],
-    meta: { line: number, file: string, path?: string, url?: string }
-};
+export type TypesStructure = Class | Function | Interface | Typedefs;
 
-export interface InterfaceStructure {
-    name: string,
-    description?: string,
-    props?: [{
-        name: string,
-        description?: string,
-        scope: string,
-        type: any[],
-        meta: { line: number, file: string, path?: string, url?: string }
-    }],
-    methods: [],
-    meta: { line: number, file: string, path?: string, url?: string }
-};
-
-export interface TypedefsStructure {
-    name: string,
-    description?: string,
-    type: any[],
-    props: [{
-        name: string,
-        description?: string,
-        type: any[]
-    }],
-    meta: { line: number, file: string, path?: string, url?: string }
-};
-
-export type DataTypesStructure =
-    ClassStructure |
-    FunctionStructure |
-    InterfaceStructure |
-    TypedefsStructure;
-
-export interface DiscordJSDocsJSONOutput {
-    meta?: {generator: string, format: number, date: number },
-    classes?: ClassStructure[],
-    functions?: FunctionStructure[],
-    interfaces?: InterfaceStructure[],
-    typedefs?: TypedefsStructure[],
-    externals?: [{ name?: string, see?: [], meta?: { line: number, file: string, path: string } }],
+export interface DiscordJSDocsDefaultJSONOutput {
+    meta?: { generator: string, format: number, date: number },
+    classes?: Class[],
+    functions?: Function[],
+    interfaces?: Interface[],
+    typedefs?: Typedefs[],
+    externals?: [{ name?: string, see?: [], meta?: { line: number, file: string, path?: string } }],
     custom?: { general?: { name?: string, files?: { welcome?: { name?: string, type?: string, content?: string } } } }
 };
 
@@ -182,7 +105,7 @@ export interface DiscordJSDocsAPIJSONOutput {
         schemaVersion: number,
         oldestForwardsCompatibleVersion: number,
         tsDocConfig?: {
-            '$schema': string,
+            $schema: string,
             noStandardTags: boolean,
             tagDefinition: [],
             supportForTags?: object,
@@ -202,4 +125,82 @@ export interface DiscordJSDocsAPIJSONOutput {
         preserveMemberOrder: boolean,
         members: []
     }]
+};
+
+export interface Class {
+    name: string,
+    description?: string,
+    implements?: [],
+    construct?: { name?: string, params?: [] },
+    props?: [{
+        name: string,
+        description?: string,
+        scope: string,
+        nullable?: boolean,
+        readonly?: boolean,
+        type: any[],
+        meta: { line: number, file: string, path?: string, url?: string }
+    }],
+    methods?: [{
+        name: string,
+        description?: string,
+        scope: string,
+        params: {
+            name: string,
+            description?: string,
+            type: []
+        }[],
+        returns: any[],
+        meta: { line: number, file: string, path?: string, url?: string }
+    }],
+    extends?: any[],
+    abstract?: boolean,
+    events?: [{
+        name: string,
+        description?: string,
+        params?: any[],
+        meta: { line: number, file: string, path?: string, url?: string }
+    }]
+    meta: { line: number, file: string, path?: string, url?: string }
+};
+
+export interface Function {
+    name: string,
+    description?: string,
+    scope: string,
+    access?: string,
+    async?: boolean,
+    params?: {
+        name: string,
+        description?: string,
+        type: any[]
+    }[],
+    returns?: [],
+    meta: { line: number, file: string, path?: string, url?: string }
+};
+
+export interface Interface {
+    name: string,
+    description?: string,
+    props?: [{
+        name: string,
+        description?: string,
+        scope: string,
+        type: any[],
+        meta: { line: number, file: string, path?: string, url?: string }
+    }],
+    methods: [],
+    meta: { line: number, file: string, path?: string, url?: string }
+};
+
+export interface Typedefs {
+    name: string,
+    description?: string,
+    type: any[],
+    props: [{
+        name: string,
+        description?: string,
+        type: any[]
+    }],
+    meta: { line: number, file: string, path?: string, url?: string }
 };

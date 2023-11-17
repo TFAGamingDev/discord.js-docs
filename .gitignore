@@ -1,4 +1,5 @@
 node_modules/
 lib/
+old_src/
 
 package-lock.json
