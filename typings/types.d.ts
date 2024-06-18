@@ -74,7 +74,7 @@ export interface FormatOutput {
     url?: string;
 }
 export type Types = 'classes' | 'functions' | 'interfaces' | 'typedefs' | 'externals';
-export type TypesStructure = Class | Function | Interface | Typedefs;
+export type TypesStructure = Class & Function & Interface & Typedefs;
 export interface DiscordJSDocsDefaultJSONOutput {
     meta?: {
         generator: string;

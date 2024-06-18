@@ -78,7 +78,7 @@ import { DocsUtils } from '@tfadev/discord.js-docs';
 
 DocsUtils.format([...]);
 
-DocsUtils.format([ ..], {
+DocsUtils.format([...], {
     symbols: {
         classes: 'C',
         functions: 'F',

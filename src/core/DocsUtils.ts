@@ -1,14 +1,12 @@
 import { FormatOptions, FormatOutput, SearchOutput } from "../types";
-import Docs from "./Docs";
 
-export default abstract class {
-    public static format(searched: SearchOutput[], instance: Docs, options?: FormatOptions) {
+export abstract class DocsUtils {
+    public static format(searched: SearchOutput[], options?: FormatOptions) {
         if (options?.sort === true) searched.sort((a, b) => b.points - a.points);
 
         const output: FormatOutput[] = [];
 
         for (let i = 0; i < searched.length; i++) {
-            const splittedURL = searched[i].structure.meta?.path?.split('/');
 
             let datatype = 'General';
 
@@ -33,8 +31,6 @@ export default abstract class {
                     break;
                 };
             };
-
-            const fileName = searched[i].structure?.meta?.file?.split('.')[0];
 
             const removeJSDocsComments = (string: string): { tag: string, content: string }[] => {
                 const regex = /{@([a-zA-Z]+)(?: (.*?))?(?:}|\n)/g;

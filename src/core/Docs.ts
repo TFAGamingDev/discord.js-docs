@@ -1,7 +1,7 @@
 import { axiosFetch, compare } from "../functions";
 import { BaseURLs, DiscordJSDocsAPIJSONOutput, DiscordJSDocsDefaultJSONOutput, SearchOptions, SearchOutput, SourceURL, Sources } from "../types";
 
-export default class {
+export class Docs {
     public readonly baseURL: BaseURLs = 'discord.js.org';
     public readonly cache?: Map<string, DiscordJSDocsDefaultJSONOutput | DiscordJSDocsAPIJSONOutput>;
     public readonly timeout: number = 15000;

@@ -1,5 +1,5 @@
 import { BaseURLs, DiscordJSDocsAPIJSONOutput, DiscordJSDocsDefaultJSONOutput, SearchOptions, SearchOutput, Sources } from "../types";
-export default class {
+export declare class Docs {
     readonly baseURL: BaseURLs;
     readonly cache?: Map<string, DiscordJSDocsDefaultJSONOutput | DiscordJSDocsAPIJSONOutput>;
     readonly timeout: number;
